@@ -53,7 +53,7 @@
           Downlod PDF
         </button>
       </div>
-      <% if (typeof err !== 'undefined') { %>
+      <% if (typeof err !== 'undefined' && err) { %>
       <p class="text-danger"><%= err %></p>
       <% } %>
     </form>
