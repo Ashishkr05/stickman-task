@@ -58,7 +58,7 @@
       <% } %>
     </form>
 
-    <% if (data.length) { %>
+    <% if (typeof data !== 'undefined' && data.length) { %>
     <table
       class="shadow-lg my-3 table table-striped m-auto"
       style="max-height: 80vh; overflow: scroll; width: 80%"
