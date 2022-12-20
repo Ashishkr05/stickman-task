@@ -11,7 +11,7 @@ export const adminHomePageController = async (req, res) => {
       $gt: String(left || "0000"),
       $lt: String(right || "9999"),
     },
-  });
+  }, null, { sort: { _id: -1 }});
   return res.render("admin", {
     username: req.auth.username,
     right,

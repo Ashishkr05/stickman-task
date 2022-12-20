@@ -10,8 +10,8 @@ router.get("/admin", protectedRoute, (req, res) => {
   }
   return res.render("admin", {
     username: req.auth.username,
-    left: 1000,
-    right: 1010
+    left: '',
+    right: ''
   });
 });
 

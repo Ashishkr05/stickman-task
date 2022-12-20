@@ -13,8 +13,10 @@
   </head>
   <body>
     <% if (data.length) { %>
+      <% for( let i = 0; i < data.length; i++ ) { %>
     <table
       class="table table-striped"
+      style="break-before: page;"
     >
       <thead>
         <tr>
@@ -24,15 +26,16 @@
           <th scope="col">Number</th>
         </tr>
       </thead>
-      <% for( let index = 0; index < data.length; index++ ) { %>
+      <% for( let index = 0; index < data[i].length; index++ ) { %>
       <tr>
         <td><%= index + 1 %></td>
-        <td><%= data[index].id %></td>
-        <td><%= data[index].name %></td>
-        <td><%= data[index].number %></td>
+        <td><%= data[i][index].id %></td>
+        <td><%= data[i][index].name %></td>
+        <td><%= data[i][index].number %></td>
       </tr>
       <% } %>
     </table>
+    <% } %>
     <% } %>
   </body>
 </html>

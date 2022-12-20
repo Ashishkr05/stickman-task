@@ -14,7 +14,7 @@ export const pdfController = async (req, res) => {
   }
   let { left, right } = req.body;
 
-  const data = await Data.find({
+  const data = await Data.distinct("name", {
     id: {
       $gt: String(left || "0000"),
       $lt: String(right || "9999"),
@@ -29,20 +29,35 @@ export const pdfController = async (req, res) => {
       err: data.length === 0 && "No data in given range",
     });
   }
+  const tables = [];
+  for (let name of data) {
+    const nD = await Data.find({
+      id: {
+        $gt: String(left || "0000"),
+        $lt: String(right || "9999"),
+      },
+      name,
+    }).lean();
+    tables.push(nD);
+  }
   const html = await ejs.renderFile(
     path.join(__dirname, "..", "views", "tables.ejs"),
     {
-      data,
+      data: tables,
     }
   );
-  const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
   const page = await browser.newPage();
   await page.setContent(html);
   const buffer = await page.pdf({
-    margin: 10
-  })
-  res.setHeader('Content-Length', buffer.length);
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', 'attachment; filename=quote.pdf');
+    margin: 10,
+  });
+  await browser.close();
+  res.setHeader("Content-Length", buffer.length);
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Disposition", "attachment; filename=quote.pdf");
   return res.send(buffer);
 };
