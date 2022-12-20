@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs/dist/bcrypt.js";
 import User from "../models/user.js";
+import Admin from "../models/admin.js";
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
 config();
@@ -49,7 +50,7 @@ export const loginAdmin = async (req, res) => {
     return res.render("login-admin", {
       error,
     });
-  const user = await User.findOne({ username });
+  const user = await Admin.findOne({ username });
   if (!user)
     return res.render("login-admin", {
       error: {

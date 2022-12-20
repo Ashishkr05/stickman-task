@@ -21,7 +21,7 @@
       <thead>
         <tr>
           <th scope="col">Sno</th>
-          <th scope="col">Token</th>
+          <th scope="col">Date</th>
           <th scope="col">Name</th>
           <th scope="col">Number</th>
         </tr>
@@ -29,7 +29,7 @@
       <% for( let index = 0; index < data[i].length; index++ ) { %>
       <tr>
         <td><%= index + 1 %></td>
-        <td><%= data[i][index].id %></td>
+        <td><%= data[i][index].created_on.toISOString().substring(0, 10) %></td>
         <td><%= data[i][index].name %></td>
         <td><%= data[i][index].number %></td>
       </tr>

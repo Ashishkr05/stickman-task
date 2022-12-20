@@ -13,13 +13,28 @@ export const pdfController = async (req, res) => {
     return res.redirect("/login-admin");
   }
   let { left, right } = req.body;
+  let leftDate = new Date(left || 0),
+    rightDate = right ? new Date(right) : new Date();
 
-  const data = await Data.distinct("name", {
-    id: {
-      $gt: String(left || "0000"),
-      $lt: String(right || "9999"),
+  const data = await Data.aggregate([
+    {
+      $addFields: {
+        created_on: { $toDate: "$_id" },
+      },
     },
-  });
+    {
+      $match: {
+        created_on: {
+          $gt: leftDate,
+          $lt: rightDate,
+        },
+      },
+    },
+    { $group: { _id: null, name: { $addToSet: "$name" } } },
+    { $unwind: "$name" },
+    { $project: { _id: 0 } },
+  ]);
+
   if (data.length === 0) {
     res.render("admin", {
       username: req.auth.username,
@@ -30,14 +45,23 @@ export const pdfController = async (req, res) => {
     });
   }
   const tables = [];
-  for (let name of data) {
-    const nD = await Data.find({
-      id: {
-        $gt: String(left || "0000"),
-        $lt: String(right || "9999"),
+  for (let { name } of data) {
+    const nD = await Data.aggregate([
+      {
+        $addFields: {
+          created_on: { $toDate: "$_id" },
+        },
       },
-      name,
-    }).lean();
+      {
+        $match: {
+          created_on: {
+            $gt: leftDate,
+            $lt: rightDate,
+          },
+          name
+        },
+      },
+    ]);
     tables.push(nD);
   }
   const html = await ejs.renderFile(
